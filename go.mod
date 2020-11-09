@@ -44,3 +44,5 @@ require (
 )
 
 replace gopkg.in/ory-am/dockertest.v3 => github.com/ory/dockertest/v3 v3.6.2
+
+replace github.com/marcboudreau/vault-circleci-auth-plugin => ./
