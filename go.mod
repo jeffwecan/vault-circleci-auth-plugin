@@ -40,3 +40,5 @@ require (
 	google.golang.org/genproto v0.0.0-20180323190852-ab0870e398d5
 	google.golang.org/grpc v1.10.0
 )
+
+replace gopkg.in/ory-am/dockertest.v3 => github.com/ory/dockertest/v3 v3.6.2
