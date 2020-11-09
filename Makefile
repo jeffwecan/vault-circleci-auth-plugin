@@ -68,4 +68,11 @@ release: tag
 clean:
 	rm -rf bin/ || true
 
-.PHONY: clean tag release
+.PHONY: clean tag release jhog-docker-test
+
+jhog-docker-test:
+	docker build . --tag='vault-circleci-auth-plugin:latest'
+	docker tag 'vault-circleci-auth-plugin:latest' "vault-circleci-auth-plugin:$(shell git describe --tags --dirty --always)"
+	docker run --rm --detach --name='test-cci-auth' 'vault-circleci-auth-plugin'
+	sleep 5
+	docker logs 'test-cci-auth'
