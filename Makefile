@@ -73,6 +73,11 @@ clean:
 jhog-docker-test:
 	docker build . --tag='vault-circleci-auth-plugin:latest'
 	docker tag 'vault-circleci-auth-plugin:latest' "vault-circleci-auth-plugin:$(shell git describe --tags --dirty --always)"
-	docker run --rm --detach --name='test-cci-auth' 'vault-circleci-auth-plugin'
+	docker run \
+		--rm \
+		--detach \
+		--name='test-cci-auth' \
+		--cap-add IPC_LOCK \
+		'vault-circleci-auth-plugin'
 	sleep 5
 	docker logs 'test-cci-auth'
