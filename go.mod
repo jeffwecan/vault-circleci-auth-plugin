@@ -20,6 +20,8 @@ require (
 	github.com/hashicorp/golang-lru v0.0.0-20180201235237-0fb14efe8c47
 	github.com/hashicorp/hcl v0.0.0-20180320202055-f40e974e75af
 	github.com/hashicorp/vault v0.9.6
+	github.com/hashicorp/yamux v0.0.0-20200609203250-aecfd211c9ce // indirect
+	github.com/marcboudreau/vault-circleci-auth-plugin v0.0.0-20180723043507-12d005998064
 	github.com/mattn/go-colorable v0.0.9
 	github.com/mattn/go-isatty v0.0.3
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
