@@ -3,7 +3,7 @@ FROM golang:alpine AS build
 WORKDIR /go/src/github.com/marcboudreau/vault-circleci-auth-plugin/
 COPY . /go/src/github.com/marcboudreau/vault-circleci-auth-plugin/
 
-RUN go build -o vault-circleci-auth-plugin
+RUN go build -o vault-circleci-auth-plugin cmd/vault-plugin-auth-circleci/main.go
 
 FROM vault:latest
 
