@@ -6,11 +6,11 @@ import (
 	"log"
 	"net/url"
 
-	"github.com/hashicorp/vault/logical"
-	"github.com/hashicorp/vault/logical/framework"
+	"github.com/hashicorp/vault/sdk/framework"
+	"github.com/hashicorp/vault/sdk/logical"
 )
 
-func pathLogin(b *backend) *framework.Path {
+func (b *backend) pathLogin() *framework.Path {
 	return &framework.Path{
 		Pattern: "login",
 		Fields: map[string]*framework.FieldSchema{
@@ -32,12 +32,12 @@ func pathLogin(b *backend) *framework.Path {
 			},
 		},
 		Callbacks: map[logical.Operation]framework.OperationFunc{
-			logical.UpdateOperation: b.pathLogin,
+			logical.UpdateOperation: b.handleLogin,
 		},
 	}
 }
 
-func (b *backend) pathLogin(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
+func (b *backend) handleLogin(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
 	project := d.Get("project").(string)
 	buildNum := d.Get("build_num").(int)
 	vcsRevision := d.Get("vcs_revision").(string)
@@ -139,6 +139,7 @@ func (b *backend) verifyBuild(ctx context.Context, req *logical.Request, project
 		Policies: projectPolicyList,
 	}, nil, nil
 }
+
 
 type verifyBuildResponse struct {
 	Policies []string
