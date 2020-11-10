@@ -39,7 +39,7 @@ type GetInvalidJSONStorage struct {
 	logical.Storage
 }
 
-func (s GetInvalidJSONStorage) Get(ctxt context.Context, path string) (*logical.StorageEntry, error) {
+func (s GetInvalidJSONStorage) Get(ctx context.Context, path string) (*logical.StorageEntry, error) {
 	return &logical.StorageEntry{
 		Key:   "config",
 		Value: []byte("bad{json,is what I need"),
@@ -108,7 +108,7 @@ func TestParseDurationField(t *testing.T) {
 				"key": *tc.valueReturned,
 			},
 			Schema: map[string]*framework.FieldSchema{
-				"key": &framework.FieldSchema{
+				"key": {
 					Type: framework.TypeString,
 				},
 			},
@@ -190,22 +190,22 @@ func TestPathConfigWrite(t *testing.T) {
 					"owner":          "fred",
 				},
 				Schema: map[string]*framework.FieldSchema{
-					"circleci_token": &framework.FieldSchema{
+					"circleci_token": {
 						Type: framework.TypeString,
 					},
-					"base_url": &framework.FieldSchema{
+					"base_url": {
 						Type: framework.TypeString,
 					},
-					"ttl": &framework.FieldSchema{
+					"ttl": {
 						Type: framework.TypeString,
 					},
-					"max_ttl": &framework.FieldSchema{
+					"max_ttl": {
 						Type: framework.TypeString,
 					},
-					"vcs_type": &framework.FieldSchema{
+					"vcs_type": {
 						Type: framework.TypeString,
 					},
-					"owner": &framework.FieldSchema{
+					"owner": {
 						Type: framework.TypeString,
 					},
 				},
@@ -223,22 +223,22 @@ func TestPathConfigWrite(t *testing.T) {
 					"owner":          "fred",
 				},
 				Schema: map[string]*framework.FieldSchema{
-					"circleci_token": &framework.FieldSchema{
+					"circleci_token": {
 						Type: framework.TypeString,
 					},
-					"base_url": &framework.FieldSchema{
+					"base_url": {
 						Type: framework.TypeString,
 					},
-					"ttl": &framework.FieldSchema{
+					"ttl": {
 						Type: framework.TypeString,
 					},
-					"max_ttl": &framework.FieldSchema{
+					"max_ttl": {
 						Type: framework.TypeString,
 					},
-					"vcs_type": &framework.FieldSchema{
+					"vcs_type": {
 						Type: framework.TypeString,
 					},
-					"owner": &framework.FieldSchema{
+					"owner": {
 						Type: framework.TypeString,
 					},
 				},
@@ -257,22 +257,22 @@ func TestPathConfigWrite(t *testing.T) {
 					"owner":          "fred",
 				},
 				Schema: map[string]*framework.FieldSchema{
-					"circleci_token": &framework.FieldSchema{
+					"circleci_token": {
 						Type: framework.TypeString,
 					},
-					"base_url": &framework.FieldSchema{
+					"base_url": {
 						Type: framework.TypeString,
 					},
-					"ttl": &framework.FieldSchema{
+					"ttl": {
 						Type: framework.TypeString,
 					},
-					"max_ttl": &framework.FieldSchema{
+					"max_ttl": {
 						Type: framework.TypeString,
 					},
-					"vcs_type": &framework.FieldSchema{
+					"vcs_type": {
 						Type: framework.TypeString,
 					},
-					"owner": &framework.FieldSchema{
+					"owner": {
 						Type: framework.TypeString,
 					},
 				},

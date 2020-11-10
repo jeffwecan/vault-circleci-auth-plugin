@@ -14,32 +14,32 @@ func (b *backend) pathConfig() *framework.Path {
 	return &framework.Path{
 		Pattern: "config",
 		Fields: map[string]*framework.FieldSchema{
-			"circleci_token": &framework.FieldSchema{
+			"circleci_token": {
 				Type:        framework.TypeString,
 				Description: "The CircleCI access token that allows this plugin to make CircleCI API calls to verify the authentication information.",
 			},
-			"base_url": &framework.FieldSchema{
+			"base_url": {
 				Type:        framework.TypeString,
 				Description: "The base URL used to construct all endpoint URLs for this plugin.",
 				Default:     "https://circleci.com/api/v1.1",
 			},
-			"ttl": &framework.FieldSchema{
+			"ttl": {
 				Type:        framework.TypeString,
 				Description: "Duration of the token's lifetime, unless renewed.",
 			},
-			"max_ttl": &framework.FieldSchema{
+			"max_ttl": {
 				Type:        framework.TypeString,
 				Description: "Maximum duration of the token's lifetime.",
 			},
-			"vcs_type": &framework.FieldSchema{
+			"vcs_type": {
 				Type:        framework.TypeString,
 				Description: "The version control system type where the project is hosted.  Supported values are github and bitbucket.",
 			},
-			"owner": &framework.FieldSchema{
+			"owner": {
 				Type:        framework.TypeString,
 				Description: "The user or organization that owns the project in the VCS.",
 			},
-			"attempt_cache_expiry": &framework.FieldSchema{
+			"attempt_cache_expiry": {
 				Type:        framework.TypeString,
 				Description: "The duration that login attempts are cached in order to prevent further attempts.",
 				Default:     "18000s",
