@@ -9,8 +9,7 @@ import (
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
 
-	tyluxcircleci "github.com/tylux/go-circleci"
-	"github.com/marcboudreau/vault-circleci-auth-plugin/circleci"
+	circleci "github.com/tylux/go-circleci"
 	cache "github.com/patrickmn/go-cache"
 )
 
@@ -26,7 +25,7 @@ type backend struct {
 
 // Client is the interface for clients used to talk to the CircleCI API.
 type Client interface {
-	GetBuild(project string, buildNum int) (*tyluxcircleci.Build, error)
+	GetBuild(project string, buildNum int) (*circleci.Build, error)
 	SetBaseURL(baseURL *url.URL)
 }
 
@@ -89,7 +88,7 @@ func newBackend() (*backend, error) {
 
 func (b *backend) GetClient(token, vcsType, owner string) Client {
 	if b.client == nil {
-		b.client = circleci.New(token, vcsType, owner)
+		b.client = NewCCIClient(token, vcsType, owner)
 	}
 
 	return b.client
