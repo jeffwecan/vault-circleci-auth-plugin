@@ -2,13 +2,15 @@ package main
 
 import (
 	"context"
-	"time"
 	"fmt"
+	"net/url"
+	"time"
+
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
 
+	tyluxcircleci "github.com/tylux/go-circleci"
 	"github.com/marcboudreau/vault-circleci-auth-plugin/circleci"
-
 	cache "github.com/patrickmn/go-cache"
 )
 
@@ -20,6 +22,30 @@ type backend struct {
 
 	AttemptsCache *cache.Cache
 	CacheExpiry   time.Duration
+}
+
+// Client is the interface for clients used to talk to the CircleCI API.
+type Client interface {
+	GetBuild(project string, buildNum int) (*tyluxcircleci.Build, error)
+	SetBaseURL(baseURL *url.URL)
+}
+
+// Factory constructs the plugin instance with the provided BackendConfig.
+func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend, error) {
+	b, err := newBackend()
+	if err != nil {
+		return nil, err
+	}
+
+	if conf == nil {
+		return nil, fmt.Errorf("configuration passed into backend is nil")
+	}
+
+	if err := b.Setup(ctx, conf); err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }
 
 func newBackend() (*backend, error) {
