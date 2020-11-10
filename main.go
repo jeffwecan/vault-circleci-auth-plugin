@@ -4,33 +4,15 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"os"
 
 	"github.com/hashicorp/go-hclog"
-
-	// "github.com/hashicorp/vault/helper/pluginutil"
-	"os"
-	// "github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/logical"
 	"github.com/hashicorp/vault/sdk/plugin"
+
 	circleci "github.com/tylux/go-circleci"
 )
-
-// func main() {
-// 	apiClientMeta := &pluginutil.APIClientMeta{}
-// 	flags := apiClientMeta.FlagSet()
-// 	flags.Parse(os.Args[1:])
-
-// 	tlsConfig := apiClientMeta.GetTLSConfig()
-// 	tlsProviderFunc := pluginutil.VaultPluginTLSProvider(tlsConfig)
-
-// 	if err := plugin.Serve(&plugin.ServeOpts{
-// 		BackendFactoryFunc: Factory,
-// 		TLSProviderFunc:    tlsProviderFunc,
-// 	}); err != nil {
-// 		log.Fatal(err)
-// 	}
-// }
 
 func main() {
 	apiClientMeta := &api.PluginAPIClientMeta{}
@@ -51,8 +33,6 @@ func main() {
 		os.Exit(1)
 	}
 }
-
-var _ logical.Factory = Factory
 
 // Factory constructs the plugin instance with the provided BackendConfig.
 func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend, error) {
