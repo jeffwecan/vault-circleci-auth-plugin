@@ -1,4 +1,4 @@
-package main
+package cciauth
 
 import (
 	"context"
@@ -13,6 +13,12 @@ import (
 	cache "github.com/patrickmn/go-cache"
 )
 
+// Client is the interface for clients used to talk to the CircleCI API.
+type Client interface {
+	GetBuild(project string, buildNum int) (*circleci.Build, error)
+	SetBaseURL(baseURL *url.URL)
+}
+
 type backend struct {
 	*framework.Backend
 
@@ -21,12 +27,6 @@ type backend struct {
 
 	AttemptsCache *cache.Cache
 	CacheExpiry   time.Duration
-}
-
-// Client is the interface for clients used to talk to the CircleCI API.
-type Client interface {
-	GetBuild(project string, buildNum int) (*circleci.Build, error)
-	SetBaseURL(baseURL *url.URL)
 }
 
 // Factory constructs the plugin instance with the provided BackendConfig.

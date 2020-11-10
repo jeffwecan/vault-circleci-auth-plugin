@@ -1,4 +1,4 @@
-package main
+package cciauth
 
 import (
 	"container/heap"

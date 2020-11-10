@@ -3,11 +3,13 @@ package main
 import (
 	"os"
 
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/vault/api"
 	"github.com/hashicorp/vault/sdk/plugin"
 
-	"github.com/hashicorp/go-hclog"
+	cciauth "github.com/marcboudreau/vault-circleci-auth-plugin"
 )
+
 
 func main() {
 	apiClientMeta := &api.PluginAPIClientMeta{}
@@ -18,7 +20,7 @@ func main() {
 	tlsProviderFunc := api.VaultPluginTLSProvider(tlsConfig)
 
 	err := plugin.Serve(&plugin.ServeOpts{
-		BackendFactoryFunc: Factory,
+		BackendFactoryFunc: cciauth.Factory,
 		TLSProviderFunc:    tlsProviderFunc,
 	})
 	if err != nil {
