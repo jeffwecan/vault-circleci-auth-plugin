@@ -13,8 +13,8 @@ type CircleCIBuildList struct {
 	buildTimes BuildHeap
 }
 
-// New ...
-func New() *CircleCIBuildList {
+// NewCircleCIBuildList ...
+func NewCircleCIBuildList() *CircleCIBuildList {
 	return &CircleCIBuildList{
 		projects:   make(map[string]map[int]struct{}),
 		buildTimes: BuildHeap{},
