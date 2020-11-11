@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/url"
+	"encoding/hex"
 
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
@@ -131,6 +132,18 @@ func (b *backend) verifyBuild(ctx context.Context, req *logical.Request, project
 	// Make sure the hashes match
 	if build.VcsRevision != vcsRevision {
 		return nil, logical.ErrorResponse("provided VCS revision does not match the revision reported by circleci"), nil
+	}
+
+	nonce, err := b.Nonce(ctx, req.Storage)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// read the nonce from the circleci build logs and verify before continuing
+	// need to actually read from the build url for all the steps in the job and look for the nonce
+	if hex.EncodeToString(nonce.Nonce) != build.BuildURL  {
+		//fmt.Println("Nonce is:", hex.EncodeToString(nonce.Nonce))
+		return nil, logical.ErrorResponse("Nonce stored for this build number does not match the one reported by circleci"), nil
 	}
 
 	projectPolicyList, err := b.ProjectMap.Policies(ctx, req.Storage, build.Reponame)
