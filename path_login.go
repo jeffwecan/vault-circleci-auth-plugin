@@ -107,7 +107,10 @@ func (b *backend) verifyNonce(build *circleci.Build, nonce string) (bool, error)
 	for _, step := range steps {
 		for _, action := range step.Actions {
 			fmt.Printf("%s", action.OutputURL)
-			b.Logger().Info(action.OutputURL)
+			b.Logger().Info(fmt.Sprintf("action.OutputURL: %s", action.OutputURL))
+			if action.OutputURL == "" {
+				continue
+			}
 			var err error
 			resp, err = http.Get(action.OutputURL)
 			if err != nil {
