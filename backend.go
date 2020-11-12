@@ -61,8 +61,6 @@ func newBackend() (*backend, error) {
 	b.AttemptsCache = cache.New(5*time.Hour, cache.NoExpiration)
 	b.CacheExpiry = 5 * time.Hour
 
-	// allPaths := append(b.ProjectMap.Paths(), pathConfig(&b), pathLogin(&b), pathGenerateNonce(&b))
-
 	b.Backend = &framework.Backend{
 		// Help:        strings.TrimSpace(mockHelp),
 		BackendType: logical.TypeCredential,
