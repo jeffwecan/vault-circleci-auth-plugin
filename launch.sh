@@ -15,9 +15,9 @@ cat /vault/config/local.json
 sha_sum=$(sha256sum /vault/plugins/vault-circleci-auth-plugin \
         | cut -d ' ' -f 1)
 
-vault write \
+/wait-for-it.sh -t 20 -h 127.0.0.1 -p 8200 -s -- vault write \
         sys/plugins/catalog/vault-circleci-auth \
-        sha_256=$sha_sum command=vault-circleci-auth-plugin
+        sha_256="$sha_sum" command=vault-circleci-auth-plugin
 
 vault auth \
         enable \
