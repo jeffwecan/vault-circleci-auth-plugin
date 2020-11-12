@@ -10,6 +10,7 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/stretchr/testify v1.6.1
 	github.com/tylux/go-circleci v0.0.0-20180427201651-57548b38ee3b
+	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
 )
 
 replace gopkg.in/ory-am/dockertest.v3 => github.com/ory/dockertest/v3 v3.6.2

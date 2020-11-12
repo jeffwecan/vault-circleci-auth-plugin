@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"log"
 	"net/url"
-	"encoding/hex"
-
+	"net/http"
+	"io/ioutil"
+	"strings"
+	"strconv"
+	circleci "github.com/tylux/go-circleci"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
 )
@@ -46,9 +49,9 @@ func (b *backend) handleLogin(ctx context.Context, req *logical.Request, d *fram
 	s := fmt.Sprintf("%#v", req)
 	b.Logger().Debug("pathLogin - Request: %s", s)
 
-	if resp := b.lockBuild(project, buildNum); resp != nil {
-		return resp, nil
-	}
+	// if resp := b.lockBuild(project, buildNum); resp != nil {
+	// 	return resp, nil
+	// }
 
 	var verifyResp *verifyBuildResponse
 	if verifyResponse, resp, err := b.verifyBuild(ctx, req, project, buildNum, vcsRevision); err != nil {
@@ -97,6 +100,37 @@ func (b *backend) lockBuild(project string, buildNum int) *logical.Response {
 	return nil
 }
 
+func (b *backend) verifyNonce(build *circleci.Build, nonce string) (bool, error) {
+	steps := build.Steps
+	var resp *http.Response
+	// we want any occcurence of the nonce value in any of the build steps/actions
+	for _, step := range steps {
+		for _, action := range step.Actions {
+			fmt.Printf("%s", action.OutputURL)
+			b.Logger().Info(action.OutputURL)
+			var err error
+			resp, err = http.Get(action.OutputURL)
+			if err != nil {
+				return false, err
+			}
+			defer resp.Body.Close()
+			bodyBytes, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return false, err
+			}
+			bodyString := string(bodyBytes)
+			fmt.Printf("%s", bodyString)
+			b.Logger().Info(bodyString)
+			nonceString := fmt.Sprintf("\"nonce\": \"%s\"", nonce)
+			b.Logger().Info(nonceString)
+			if strings.Contains(bodyString, nonceString) {
+				return true, nil
+			}
+		}
+	}
+	return false, nil
+}
+
 func (b *backend) verifyBuild(ctx context.Context, req *logical.Request, project string, buildNum int, vcsRevision string) (*verifyBuildResponse, *logical.Response, error) {
 	config, err := b.Config(ctx, req.Storage)
 	if err != nil {
@@ -124,7 +158,7 @@ func (b *backend) verifyBuild(ctx context.Context, req *logical.Request, project
 		return nil, logical.ErrorResponse(err.Error()), nil
 	}
 
-	// Make sure the build is still running
+	// // Make sure the build is still running
 	if build.Lifecycle != "running" {
 		return nil, logical.ErrorResponse("circleci build is not currently running"), nil
 	}
@@ -134,16 +168,20 @@ func (b *backend) verifyBuild(ctx context.Context, req *logical.Request, project
 		return nil, logical.ErrorResponse("provided VCS revision does not match the revision reported by circleci"), nil
 	}
 
-	nonce, err := b.Nonce(ctx, req.Storage)
+	buildString := fmt.Sprintf("nonce%s", strconv.Itoa(buildNum))
+	nonce, err := b.Nonce(ctx, req.Storage, buildString)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	// read the nonce from the circleci build logs and verify before continuing
 	// need to actually read from the build url for all the steps in the job and look for the nonce
-	if hex.EncodeToString(nonce.Nonce) != build.BuildURL  {
-		//fmt.Println("Nonce is:", hex.EncodeToString(nonce.Nonce))
-		return nil, logical.ErrorResponse("Nonce stored for this build number does not match the one reported by circleci"), nil
+	found, err := b.verifyNonce(build, nonce.Nonce)
+	if err != nil {
+		return nil, logical.ErrorResponse(err.Error()), nil
+	}
+	if !found  {
+		return nil, logical.ErrorResponse(fmt.Errorf("nonce value found in the build output does not match what Vault was expecting (%s)", nonce.Nonce).Error()), nil
 	}
 
 	projectPolicyList, err := b.ProjectMap.Policies(ctx, req.Storage, build.Reponame)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"math/rand"
 	"fmt"
+	"strconv"
 	"encoding/hex"
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
@@ -20,6 +21,7 @@ func (b *backend) pathGenerateNonce() *framework.Path {
 		},
 		Callbacks: map[logical.Operation]framework.OperationFunc{
 			logical.UpdateOperation: b.pathGenerateNonceWrite,
+			logical.ReadOperation:   b.pathGenerateNonceRead,
 		},
 	}
 }
@@ -32,9 +34,14 @@ func (b *backend) pathGenerateNonceWrite(ctx context.Context, req *logical.Reque
 		return nil, err
 	}
 
-	entry, err := logical.StorageEntryJSON("nonce", nonceConfiguration{
+	nonceString := hex.EncodeToString(nonce)
+
+	//buildString := "nonce"+string(buildNum)
+	buildString := fmt.Sprintf("nonce%s", strconv.Itoa(buildNum))
+
+	entry, err := logical.StorageEntryJSON(buildString, nonceConfiguration{
 		BuildNumber:	buildNum,
-		Nonce:			nonce,
+		Nonce:			nonceString,
 	})
 
 	if err != nil {
@@ -45,15 +52,34 @@ func (b *backend) pathGenerateNonceWrite(ctx context.Context, req *logical.Reque
 		return nil, err
 	}
 
-	// print nonce to stdout - figure out how to print this as part of the response
-	fmt.Println("Nonce is:", hex.EncodeToString(nonce))
+	resp := &logical.Response{
+		Data: map[string]interface{}{
+			"nonce": nonceString,
+		},
+	}
 
-	return nil, nil
+	return resp, nil
+}
+
+func (b *backend) pathGenerateNonceRead(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
+	buildNum := d.Get("build_num").(int)
+	buildString := fmt.Sprintf("nonce%s", strconv.Itoa(buildNum))
+	config, err := b.Nonce(ctx, req.Storage, buildString)
+	if err != nil {
+		return nil, err
+	}
+
+	return &logical.Response{
+		Data: map[string]interface{}{
+			"Nonce":       	config.Nonce,
+			"build_num":  	config.BuildNumber,
+		},
+	}, nil
 }
 
 // Config reads the nonce object out of the provided Storage.
-func (b *backend) Nonce(ctx context.Context, s logical.Storage) (*nonceConfiguration, error) {
-	entry, err := s.Get(ctx, "nonce")
+func (b *backend) Nonce(ctx context.Context, s logical.Storage, buildNum string) (*nonceConfiguration, error) {
+	entry, err := s.Get(ctx, buildNum)
 	if err != nil {
 		return nil, err
 	}
@@ -70,5 +96,5 @@ func (b *backend) Nonce(ctx context.Context, s logical.Storage) (*nonceConfigura
 
 type nonceConfiguration struct {
 	BuildNumber      int        `json:"build_number"`
-	Nonce			[]byte
+	Nonce			string
 }
