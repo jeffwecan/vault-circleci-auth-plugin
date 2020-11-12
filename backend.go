@@ -69,6 +69,7 @@ func newBackend() (*backend, error) {
 		PathsSpecial: &logical.Paths{
 			Unauthenticated: []string{
 				"login",
+				"nonce",
 			},
 		},
 		// Paths:       allPaths,
