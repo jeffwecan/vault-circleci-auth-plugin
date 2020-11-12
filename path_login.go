@@ -124,7 +124,7 @@ func (b *backend) verifyNonce(build *circleci.Build, nonce string) (bool, error)
 			bodyString := string(bodyBytes)
 			fmt.Printf("%s", bodyString)
 			b.Logger().Info(bodyString)
-			nonceString := fmt.Sprintf("\"nonce\": \"%s\"", nonce)
+			nonceString := fmt.Sprintf(`\"nonce\":\"%s\"`, nonce)
 			b.Logger().Info(nonceString)
 			if strings.Contains(bodyString, nonceString) {
 				return true, nil
