@@ -21,27 +21,27 @@ all: $(UNIX_EXECUTABLES:%=bin/%) $(WINDOWS_EXECUTABLES:%=bin/%) test-results.txt
 
 # arm
 bin/linux/arm/5/$(EXECUTABLE):
-	GOARM=5 GOARCH=arm GOOS=linux go build -o "$@"
+	GOARM=5 GOARCH=arm GOOS=linux go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 bin/linux/arm/7/$(EXECUTABLE):
-	GOARM=7 GOARCH=arm GOOS=linux go build -o "$@"
+	GOARM=7 GOARCH=arm GOOS=linux go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 
 # 386
 bin/darwin/386/$(EXECUTABLE):
-	GOARCH=386 GOOS=darwin go build -o "$@"
+	GOARCH=386 GOOS=darwin go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 bin/linux/386/$(EXECUTABLE):
-	GOARCH=386 GOOS=linux go build -o "$@"
+	GOARCH=386 GOOS=linux go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 bin/windows/386/$(EXECUTABLE).exe:
-	GOARCH=386 GOOS=windows go build -o "$@"
+	GOARCH=386 GOOS=windows go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 
 # amd64
 bin/freebsd/amd64/$(EXECUTABLE):
-	GOARCH=amd64 GOOS=freebsd go build -o "$@"
+	GOARCH=amd64 GOOS=freebsd go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 bin/darwin/amd64/$(EXECUTABLE):
-	GOARCH=amd64 GOOS=darwin go build -o "$@"
+	GOARCH=amd64 GOOS=darwin go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 bin/linux/amd64/$(EXECUTABLE):
-	GOARCH=amd64 GOOS=linux go build -o "$@"
+	GOARCH=amd64 GOOS=linux go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 bin/windows/amd64/$(EXECUTABLE).exe:
-	GOARCH=amd64 GOOS=windows go build -o "$@"
+	GOARCH=amd64 GOOS=windows go build -o "$@" cmd/vault-plugin-auth-circleci/main.go
 
 # compressed artifacts
 %.bz2: %

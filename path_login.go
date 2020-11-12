@@ -1,4 +1,4 @@
-package main
+package cciauth
 
 import (
 	"context"
@@ -14,19 +14,19 @@ func (b *backend) pathLogin() *framework.Path {
 	return &framework.Path{
 		Pattern: "login",
 		Fields: map[string]*framework.FieldSchema{
-			"user": &framework.FieldSchema{
+			"user": {
 				Type:        framework.TypeString,
 				Description: "The owner of the build's repository.",
 			},
-			"project": &framework.FieldSchema{
+			"project": {
 				Type:        framework.TypeString,
 				Description: "The name of the build's repository.",
 			},
-			"build_num": &framework.FieldSchema{
+			"build_num": {
 				Type:        framework.TypeInt,
 				Description: "The number of the current build.",
 			},
-			"vcs_revision": &framework.FieldSchema{
+			"vcs_revision": {
 				Type:        framework.TypeString,
 				Description: "The hash of the current build's source control revision.",
 			},

@@ -1,4 +1,4 @@
-package main
+package cciauth
 
 import (
 	"testing"
@@ -8,7 +8,7 @@ import (
 )
 
 func TestAdd(t *testing.T) {
-	l := New()
+	l := NewCircleCIBuildList()
 
 	assert.True(t, l.Add("proj1", 1))
 	assert.False(t, l.Add("proj1", 1))
@@ -20,7 +20,7 @@ func TestAdd(t *testing.T) {
 }
 
 func TestCleanup(t *testing.T) {
-	l := New()
+	l := NewCircleCIBuildList()
 
 	data := []struct {
 		project  string

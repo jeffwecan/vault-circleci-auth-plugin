@@ -1,10 +1,10 @@
-package main
+package cciauth
 
 import (
 	"context"
 	"errors"
 	"testing"
-	
+
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
 	"github.com/marcboudreau/vault-circleci-auth-plugin/mock"

@@ -1,16 +1,23 @@
-package main
+package cciauth
 
 import (
 	"context"
-	"time"
 	"fmt"
+	"net/url"
+	"time"
+
 	"github.com/hashicorp/vault/sdk/framework"
 	"github.com/hashicorp/vault/sdk/logical"
 
-	"github.com/marcboudreau/vault-circleci-auth-plugin/circleci"
-
+	circleci "github.com/tylux/go-circleci"
 	cache "github.com/patrickmn/go-cache"
 )
+
+// Client is the interface for clients used to talk to the CircleCI API.
+type Client interface {
+	GetBuild(project string, buildNum int) (*circleci.Build, error)
+	SetBaseURL(baseURL *url.URL)
+}
 
 type backend struct {
 	*framework.Backend
@@ -20,6 +27,24 @@ type backend struct {
 
 	AttemptsCache *cache.Cache
 	CacheExpiry   time.Duration
+}
+
+// Factory constructs the plugin instance with the provided BackendConfig.
+func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend, error) {
+	b, err := newBackend()
+	if err != nil {
+		return nil, err
+	}
+
+	if conf == nil {
+		return nil, fmt.Errorf("configuration passed into backend is nil")
+	}
+
+	if err := b.Setup(ctx, conf); err != nil {
+		return nil, err
+	}
+
+	return b, nil
 }
 
 func newBackend() (*backend, error) {
@@ -63,7 +88,7 @@ func newBackend() (*backend, error) {
 
 func (b *backend) GetClient(token, vcsType, owner string) Client {
 	if b.client == nil {
-		b.client = circleci.New(token, vcsType, owner)
+		b.client = NewCCIClient(token, vcsType, owner)
 	}
 
 	return b.client
